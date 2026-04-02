@@ -1,0 +1,12 @@
+#!/bin/sh
+realApp="Autodesk Fusion"
+destfolder="/Users/evanmodak/Library/Application Support/Autodesk/webdeploy/production/7f8c81d0a102339403341b39b84c7252f6a25132"
+
+STREAMERPATH="$destfolder/$realApp.app"
+FALLBACK_APP="$destfolder/${realApp} 360.app"
+
+if [ -e "$STREAMERPATH" ]; then
+  open "$STREAMERPATH" --args "$@"
+else
+  open "$FALLBACK_APP" --args "$@"
+fi

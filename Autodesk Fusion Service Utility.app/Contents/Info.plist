@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>Autodesk Fusion Service Utility</string>
+	<key>CFBundleExecutable</key>
+	<string>Autodesk Fusion Service Utility</string>
+	<key>CFBundleIconFile</key>
+	<string>Fusion_SafeMode.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.autodesk.dls.streamer.scriptapp.Autodesk-Fusion-Service-Utility</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Autodesk Fusion Service Utility</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2603.1.52</string>
+	<key>LSArchitecturePriority</key>
+	<array>
+		<string>arm64</string>
+		<string>x86_64</string>
+	</array>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.7</string>
+</dict>
+</plist>
