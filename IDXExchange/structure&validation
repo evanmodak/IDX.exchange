@@ -44,7 +44,7 @@ print(f"Sold after filter:     {len(sold_filtered)}")
 
 def null_summary(df, name):
     null_count = df.isna().sum()
-    null_pct   = null_count / len(df) * 100
+    null_pct = null_count / len(df) * 100
     summary = pd.DataFrame({
         "column":     null_count.index,
         "null_count": null_count.values,
