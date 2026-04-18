@@ -44,7 +44,7 @@ print(f"Sold after filter:     {len(sold_filtered)}")
 
 def null_summary(df, name):
     null_count = df.isna().sum()
-    null_pct = null_count / len(df) * 100
+    null_pct   = null_count / len(df) * 100
     summary = pd.DataFrame({
         "column":     null_count.index,
         "null_count": null_count.values,
@@ -98,22 +98,3 @@ print("\nNumeric Summary (Sold):")
 print(sold_numeric)
 
 print("\nDone! All reports saved.")
-
-fig, axes = plt.subplots(1, 3, figsize=(15, 4))
-
-if "ClosePrice" in sold_filtered.columns:
-    sold_filtered["ClosePrice"].dropna().plot.hist(bins=40, ax=axes[0], color="steelblue", edgecolor="white")
-    axes[0].set_title("Close Price (Sold)")
-    axes[0].set_xlabel("Close Price ($)")
-    axes[0].set_ylabel("Count")
-
-if "LivingArea" in listings_filtered.columns:
-    listings_filtered["LivingArea"].dropna().plot.hist(bins=40, ax=axes[1], color="seagreen", edgecolor="white")
-    axes[1].set_title("Living Area (Listings)")
-    axes[1].set_xlabel("Sq Ft")
-    axes[1].set_ylabel("Count")
-
-if "DaysOnMarket" in sold_filtered.columns:
-    sold_filtered["DaysOnMarket"].dropna().plot.hist(bins=40, ax=axes[2], color="coral", edgecolor="white")
-    axes[2].set_title("Days on Market (Sold)")
-    axes[2].set_
