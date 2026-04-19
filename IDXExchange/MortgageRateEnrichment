@@ -1,0 +1,37 @@
+import pandas as pd
+import os as os
+
+DATA_DIR = os.path.expanduser("~/Applications/IDXExchange/")
+sold = pd.read_csv(os.path.join(DATA_DIR, "sold_residential_combined.csv"))
+listings = pd.read_csv(os.path.join(DATA_DIR, "listings_residential_combined.csv"))
+
+url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US"
+mortgage = pd.read_csv(url, parse_dates=['DATE'])
+mortgage.columns = ['date', 'rate_30yr_fixed']
+
+mortgage['year_month'] = mortgage['date'].dt.to_period('M')
+mortgage_monthly = (
+    mortgage.groupby('year_month')['rate_30yr_fixed']
+    .mean().reset_index()
+)
+
+# Sold dataset — key off CloseDate
+sold['year_month'] = pd.to_datetime(sold['CloseDate']).dt.to_period('M')
+# Listings dataset — key off ListingContractDate
+listings['year_month'] = pd.to_datetime(
+    listings['ListingContractDate']).dt.to_period('M')
+
+sold_with_rates = sold.merge(mortgage_monthly, on='year_month', how='left')
+listings_with_rates = listings.merge(mortgage_monthly, on='year_month', how='left')
+
+# Validation with assertions (raises error if nulls exist)
+assert sold_with_rates['rate_30yr_fixed'].isnull().sum() == 0, "Nulls found in sold rates!"
+assert listings_with_rates['rate_30yr_fixed'].isnull().sum() == 0, "Nulls found in listings rates!"
+
+print(sold_with_rates[['CloseDate', 'year_month', 'ClosePrice', 'rate_30yr_fixed']].head())
+
+# Save enriched datasets as CSVs
+sold_with_rates.to_csv(os.path.join(DATA_DIR, "sold_with_rates.csv"), index=False)
+listings_with_rates.to_csv(os.path.join(DATA_DIR, "listings_with_rates.csv"), index=False)
+
+print("Done — enriched CSVs saved.")
