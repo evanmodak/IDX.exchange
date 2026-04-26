@@ -6,8 +6,9 @@ sold = pd.read_csv(os.path.join(DATA_DIR, "sold_residential_combined.csv"))
 listings = pd.read_csv(os.path.join(DATA_DIR, "listings_residential_combined.csv"))
 
 url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US"
-mortgage = pd.read_csv(url, parse_dates=['DATE'])
+mortgage = pd.read_csv(url)
 mortgage.columns = ['date', 'rate_30yr_fixed']
+mortgage['date'] = pd.to_datetime(mortgage['date'])
 
 mortgage['year_month'] = mortgage['date'].dt.to_period('M')
 mortgage_monthly = (
