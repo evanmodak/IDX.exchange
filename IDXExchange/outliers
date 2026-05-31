@@ -1,0 +1,51 @@
+import pandas as pd
+import os
+
+DATA_DIR = os.path.expanduser("~/Applications/IDXExchange/")
+
+sold = pd.read_csv(os.path.join(DATA_DIR, "sold_engineered.csv"), low_memory=False)
+
+for col in ["ClosePrice", "LivingArea", "DaysOnMarket"]:
+    sold[col] = pd.to_numeric(sold[col], errors="coerce")
+
+# IQR flag function
+def flag_iqr(df, col):
+    q1 = df[col].quantile(0.25)
+    q3 = df[col].quantile(0.75)
+    iqr = q3 - q1
+    lower = q1 - 1.5 * iqr
+    upper = q3 + 1.5 * iqr
+    return (df[col] < lower) | (df[col] > upper)
+
+# business rule flags 
+sold["flag_invalid_price"] = sold["ClosePrice"].isna() | (sold["ClosePrice"] <= 0)
+sold["flag_invalid_area"]  = sold["LivingArea"].isna()  | (sold["LivingArea"] <= 0)
+sold["flag_invalid_dom"]   = sold["DaysOnMarket"].isna() | (sold["DaysOnMarket"] < 0)
+
+#  IQR flags 
+sold["flag_iqr_price"] = flag_iqr(sold, "ClosePrice")
+sold["flag_iqr_area"]  = flag_iqr(sold, "LivingArea")
+sold["flag_iqr_dom"]   = flag_iqr(sold, "DaysOnMarket")
+
+#  Composite flag 
+sold["flag_any_outlier"] = (
+    sold["flag_invalid_price"] | sold["flag_invalid_area"] | sold["flag_invalid_dom"] |
+    sold["flag_iqr_price"]     | sold["flag_iqr_area"]     | sold["flag_iqr_dom"]
+)
+
+#  Clean dataset 
+clean = sold[~sold["flag_any_outlier"]].copy()
+
+#  Before / after comparison 
+cols = ["ClosePrice", "LivingArea", "DaysOnMarket"]
+before = sold[cols].median()
+after  = clean[cols].median()
+
+print(f"Records before: {len(sold):,}  |  after: {len(clean):,}  |  removed: {len(sold)-len(clean):,}\n")
+print("Median comparison:")
+print(pd.DataFrame({"Before": before, "After": after}).round(2))
+
+#  Export 
+sold.to_csv(os.path.join(DATA_DIR, "sold_flagged.csv"), index=False)
+clean.to_csv(os.path.join(DATA_DIR, "sold_clean.csv"), index=False)
+print("\nDone. Saved sold_flagged.csv and sold_clean.csv")
